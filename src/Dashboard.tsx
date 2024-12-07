@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { albumController } from "./controllers/album.controller";
 import "./Dashboard.css";
 
 // TODO:
@@ -17,82 +18,33 @@ function Dashboard() {
   });
 
   useEffect(() => {
-    fetchAlbums();
-  }, [triggerUpdate]);
-
-  const fetchAlbums = async () => {
-    try {
-      const response = await fetch(
-        "http://ec2-54-91-215-149.compute-1.amazonaws.com/api/query/search",
-        {
-          method: "POST",
-          headers: {
-            Authorization: "Basic cHNBZG1pbjpnb2xlZGdlcg==",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: {
-              selector: {
-                "@assetType": "album",
-              },
-            },
-          }),
-        },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setAlbums(data.result); // Atualiza o estado com os álbuns.
-      } else {
-        console.error("Erro ao buscar álbuns:", response.statusText);
+    const fetchAlbums = async () => {
+      try {
+        const fetchedAlbums = await albumController.getAlbums();
+        setAlbums(fetchedAlbums);
+      } catch (err) {
+        console.log(`erro inesperado ao buscar os albums: ${err.message}`);
       }
-    } catch (error) {
-      console.error("Erro ao buscar álbuns:", error);
-    }
-  };
+    };
 
-  const removeAlbum = async (albumId) => {
-    //TODO: Implementar Remoção
-    setTriggerUpdate(!triggerUpdate);
+    fetchAlbums();
+  }, [triggerUpdate]); // Dependência para reexecutar quando o estado for alterado
+
+  const deleteAlbum = async (albumId: string) => {
+    try {
+      await albumController.removeAlbum(albumId);
+      setTriggerUpdate(!triggerUpdate); // Atualiza a lista após remover
+    } catch (err) {
+      console.log(`erro inesperado ao remover o álbum: ${err.message}`);
+    }
   };
 
   const addAlbum = async () => {
     try {
-      const response = await fetch(
-        "http://ec2-54-91-215-149.compute-1.amazonaws.com/api/invoke/createAsset",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic cHNBZG1pbjpnb2xlZGdlcg==`, // Credenciais em Base64
-          },
-          body: JSON.stringify({
-            asset: [
-              {
-                "@assetType": "album",
-                name: input.albumTitle,
-                artist: {
-                  "@assetType": "artist",
-                  name: input.artistName,
-                  country: input.artistCountry,
-                },
-                year: Number(input.albumYear), // Certifique-se de que o ano seja um número.
-              },
-            ],
-          }),
-        },
-      );
-      const data = await response.json();
-      if (response.ok) {
-        alert("Álbum adicionado com sucesso!");
-        setTriggerUpdate(!triggerUpdate);
-      } else {
-        console.error(data);
-        alert(`Erro ao adicionar álbum: ${data.error}`);
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao se conectar com o servidor.");
+      await albumController.addAlbum(input);
+      setTriggerUpdate(!triggerUpdate); // Atualiza a lista após adicionar
+    } catch (err) {
+      console.log(`erro inesperado ao adicionar o álbum: ${err.message}`);
     }
   };
 
