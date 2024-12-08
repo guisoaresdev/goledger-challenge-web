@@ -122,7 +122,9 @@ export const albumService = {
           asset: [
             {
               "@assetType": "album",
-              id: albumId,
+              album: {
+                "@key": albumId,
+              },
             },
           ],
         }),
