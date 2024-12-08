@@ -3,3 +3,8 @@ export default interface Artist {
   name: string;
   country: string;
 }
+
+export default interface ArtistData {
+  name: string;
+  country: string;
+}

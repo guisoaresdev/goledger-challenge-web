@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { albumController } from "./controllers/album.controller";
-import "./Dashboard.css";
+import { useNavigate, useParams } from "react-router-dom";
+import { albumController } from "../../controllers/album.controller";
+import "./album.view.css";
 
 // TODO:
 // 1. Implementar todas as funcionalidades primeiro.
 // 2. Criar um controllador pra separar as chamadas de API da VIEW.
 // 3. Deixar bonito.
 
-function Dashboard() {
+function AlbumView() {
+  const { artistId } = useParams();
   const [albums, setAlbums] = useState([]);
   const [triggerUpdate, setTriggerUpdate] = useState(false);
   const [input, setInput] = useState({
@@ -16,6 +18,7 @@ function Dashboard() {
     artistCountry: "",
     albumYear: "",
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -28,7 +31,7 @@ function Dashboard() {
     };
 
     fetchAlbums();
-  }, [triggerUpdate]); // Dependência para reexecutar quando o estado for alterado
+  }, [artistId, triggerUpdate]); // Dependência para reexecutar quando o estado for alterado
 
   const deleteAlbum = async (albumId: string) => {
     try {
@@ -46,6 +49,10 @@ function Dashboard() {
     } catch (err) {
       console.log(`erro inesperado ao adicionar o álbum: ${err.message}`);
     }
+  };
+
+  const handleAlbumClick = (albumId) => {
+    navigate(`/album/${albumId}/songs`);
   };
 
   const handleChange = (e) => {
@@ -104,7 +111,7 @@ function Dashboard() {
         </button>
         <ul className="lista-album">
           {albums.map((album, index) => (
-            <li key={index}>
+            <li key={index} onClick={() => handleAlbumClick(album.id)}>
               {album.name} - {album.artist.name} ({album.year})
             </li>
           ))}
@@ -114,4 +121,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default AlbumView;

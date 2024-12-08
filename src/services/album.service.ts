@@ -1,6 +1,5 @@
 import Album from "../interfaces/album.interface";
 import AlbumData from "../interfaces/album.interface";
-import Artist from "../interfaces/artist.interface";
 
 const API_URL: string = import.meta.env.VITE_API_URL;
 const AUTH_HEADER: string = import.meta.env.VITE_AUTH_HEADER;
@@ -61,6 +60,50 @@ export const albumService = {
       console.error(error);
       alert("Erro ao se conectar com o servidor.");
     }
+  },
+
+  async fetchAlbumsByArtist(artistId: string): Promise<{ result: Album[] }> {
+    const response = await fetch(`${API_URL}/query/search`, {
+      method: "POST",
+      headers: {
+        Authorization: AUTH_HEADER,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: {
+          selector: {
+            "@assetType": "album",
+            artistId: artistId,
+          },
+        },
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch albums by artist");
+    }
+    return response.json();
+  },
+
+  async fetchSongsByAlbum(albumId: string): Promise<{ result: any[] }> {
+    const response = await fetch(`${API_URL}/query/search`, {
+      method: "POST",
+      headers: {
+        Authorization: AUTH_HEADER,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: {
+          selector: {
+            "@assetType": "song",
+            albumId: albumId,
+          },
+        },
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch songs by album");
+    }
+    return response.json();
   },
 
   async deleteAlbum(albumId: string): Promise<void> {

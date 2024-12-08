@@ -1,11 +1,30 @@
 import { albumService } from "../services/album.service";
-import Album from "../interfaces/album.interface";
-import AlbumData from "../interfaces/album.data.interface";
+import { Album, AlbumData } from "../interfaces/album.interface";
 
 export const albumController = {
   async getAlbums(): Promise<Album[]> {
     try {
       const data = await albumService.fetchAlbums();
+      return data.result;
+    } catch (error) {
+      console.error("Error fetching albums:", error.message);
+      throw error;
+    }
+  },
+
+  async getAlbumsByArtist(artistId): Promise<Void> {
+    try {
+      const data = await albumService.fetchAlbumsByArtist(artistId);
+      return data.result;
+    } catch (error) {
+      console.error("Error fetching albums:", error.message);
+      throw error;
+    }
+  },
+
+  async getSongsByAlbum(albumId): Promise<Void> {
+    try {
+      const data = await albumService.fetchSongsByAlbum(albumId);
       return data.result;
     } catch (error) {
       console.error("Error fetching albums:", error.message);
