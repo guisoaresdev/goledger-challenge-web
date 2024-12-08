@@ -83,7 +83,7 @@ function ArtistView() {
         </button>
         <ul className="lista-artistas">
           {artists.map((artist, index) => (
-            <li key={index} onClick={() => handleArtistClick(artist.id)}>
+            <li key={index} onClick={() => handleArtistClick(artist["@key"])}>
               {artist.name} - {artist.country}
             </li>
           ))}

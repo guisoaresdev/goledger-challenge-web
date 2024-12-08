@@ -73,7 +73,9 @@ export const albumService = {
         query: {
           selector: {
             "@assetType": "album",
-            artistId: artistId,
+            artist: {
+              "@key": artistId,
+            },
           },
         },
       }),
@@ -95,7 +97,9 @@ export const albumService = {
         query: {
           selector: {
             "@assetType": "song",
-            albumId: albumId,
+            album: {
+              "@key": albumId,
+            },
           },
         },
       }),
@@ -118,7 +122,7 @@ export const albumService = {
           asset: [
             {
               "@assetType": "album",
-              id: albumId, // Corrigir para passar o ID
+              id: albumId,
             },
           ],
         }),

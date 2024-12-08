@@ -23,7 +23,7 @@ function AlbumView() {
   useEffect(() => {
     const fetchAlbums = async () => {
       try {
-        const fetchedAlbums = await albumController.getAlbums();
+        const fetchedAlbums = await albumController.getAlbumsByArtist(artistId);
         setAlbums(fetchedAlbums);
       } catch (err) {
         console.log(`erro inesperado ao buscar os albums: ${err.message}`);
@@ -111,7 +111,7 @@ function AlbumView() {
         </button>
         <ul className="lista-album">
           {albums.map((album, index) => (
-            <li key={index} onClick={() => handleAlbumClick(album.id)}>
+            <li key={index} onClick={() => handleAlbumClick(album["@key"])}>
               {album.name} - {album.artist.name} ({album.year})
             </li>
           ))}
